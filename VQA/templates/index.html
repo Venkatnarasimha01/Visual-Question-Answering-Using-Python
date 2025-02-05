@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visual Question Answering.</title>
+<style>
+ /* Reset default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Center the content vertically and horizontally */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f8f8;
+}
+
+/* Container for the main content */
+.container {
+  max-width: 500px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center; /* Center-align the content */
+}
+
+/* Header styles */
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Input and button styles */
+#imageInput {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#questionInput {
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Description output styles */
+#descriptionOutput {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center; /* Center-align the description */
+}
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Visual Question Answering</h1>
+    <input type="file" id="imageInput">
+    <h3>Question</h3>
+    <textarea id="questionInput" placeholder="Enter your question about the image"></textarea>
+    <button onclick="showDescription()">Answer</button>
+    <div id="descriptionOutput"></div>
+  </div>
+
+  <script>
+    function showDescription() {
+      var input = document.getElementById('imageInput');
+      var file = input.files[0];
+      var questionInput = document.getElementById('questionInput');
+      var question = questionInput.value;
+
+      var formData = new FormData();
+      formData.append('image', file);
+      formData.append('question', question);
+
+      fetch('/analyze_image', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        var descriptionOutput = document.getElementById('descriptionOutput');
+        descriptionOutput.innerHTML = ''; // Clear previous description if any
+        var descriptionParagraph = document.createElement('p');
+        descriptionParagraph.innerText = data.description;
+        descriptionOutput.appendChild(descriptionParagraph);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  </script>
+</body>
+</html>
